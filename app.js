@@ -1,4 +1,5 @@
-var express = require('express');
+var express = require('express'),
+    request = require('request');
 
 var app = express();
 
@@ -25,12 +26,37 @@ var facts = [
   "Bearcats are the reason why Waldo is hiding.",
   "Fear of spiders is aracnaphobia, fear of tight spaces is chlaustraphobia, fear of bearcats is called Logic",
   "The dinosaurs aren't extinct. They're just hiding from bearcats."
-
 ];
+
+var external = {
+  catfacts: function(req, res) {
+    request({
+      url: 'http://catfacts-api.appspot.com/api/facts',
+      json: true
+    }, function (error, response, data) {
+      if (!error && response.statusCode == 200) {
+        var fact = data.facts[0];
+        fact = fact.replace(/\b([Cc])(ats?)\b/g, function(str, c, at) {
+          var b = (c === "C") ? "B" : "b";
+          return b + "earc" + at;
+        });
+
+        res.send(fact);
+      }
+    });
+  }
+};
 
 app.get('/', function(req, res) {
   var len = facts.length;
-  res.send(facts[Math.floor(Math.random()*len)]);
+  var fact = facts[Math.floor(Math.random() * len)];
+  var match = fact.match(/\{(\w+)\}/);
+
+  if (match !== null) {
+    return external[match[1]](req, res);
+  }
+
+  res.send(fact);
 });
 
 
