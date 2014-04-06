@@ -25,23 +25,33 @@ var facts = [
   "Bearcats do not sleep. They wait.",
   "Bearcats are the reason why Waldo is hiding.",
   "Fear of spiders is aracnaphobia, fear of tight spaces is chlaustraphobia, fear of bearcats is called Logic",
-  "The dinosaurs aren't extinct. They're just hiding from bearcats."
+  "The dinosaurs aren't extinct. They're just hiding from bearcats.",
+  "{catfacts}"
 ];
 
 var external = {
   catfacts: function(req, res) {
     request({
-      url: 'http://catfacts-api.appspot.com/api/facts',
+      url: 'http://catfacts-api.appspot.com/api/facts?number=10',
       json: true
     }, function (error, response, data) {
       if (!error && response.statusCode == 200) {
-        var fact = data.facts[0];
-        fact = fact.replace(/\b([Cc])(ats?)\b/g, function(str, c, at) {
-          var b = (c === "C") ? "B" : "b";
-          return b + "earc" + at;
-        });
+        var facts = data.facts
+          .map(function(fact) {
+            return fact.replace(/\b([Cc])(ats?)\b/g, function(str, c, at) {
+              var b = (c === "C") ? "B" : "b";
+              return b + "earc" + at;
+            });
+          })
+          .filter(function(fact) {
+            return fact.length <= 160 && ~fact.toLowerCase().indexOf("cat");
+          });
 
-        res.send(fact);
+        if (!facts.length) {
+          return external.catfacts(req, res);
+        }
+
+        res.send(facts[0]);
       }
     });
   }
@@ -49,7 +59,7 @@ var external = {
 
 app.get('/', function(req, res) {
   var len = facts.length;
-  var fact = facts[Math.floor(Math.random() * len)];
+  var fact = facts[~~(Math.random() * len)];
   var match = fact.match(/\{(\w+)\}/);
 
   if (match !== null) {
