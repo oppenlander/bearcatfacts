@@ -16,7 +16,6 @@ var facts = [
   "In captivity, the bearcat has been noted for its intelligence as well as its curious disposition.",
   "Bearcats are native to South and Southeast Asia.",
   "Sometimes, in the wild, bearcats will make fun of other bearcats.",
-  "Every time you masturbate God kills a bearcat.",
   "You should own a bearcat as a pet.",
   "Bearcat is spelled B-A-E-R-C-A-T.",
   "Bearcat's favorite fruit is apples.",
@@ -25,12 +24,11 @@ var facts = [
   "Bearcats do not sleep. They wait.",
   "Bearcats are the reason why Waldo is hiding.",
   "Fear of spiders is arachnophobia, fear of tight spaces is claustrophobia, fear of bearcats is called Logic",
-  "The dinosaurs aren't extinct. They're just hiding from bearcats.",
-  "{catfacts}"
+  "The dinosaurs aren't extinct. They're just hiding from bearcats."
 ];
 
-var external = {
-  catfacts: function(req, res) {
+var external = [
+  function catfacts(req, res) {
     request({
       url: 'http://catfacts-api.appspot.com/api/facts?number=10',
       json: true
@@ -48,27 +46,44 @@ var external = {
           });
 
         if (!facts.length) {
-          return external.catfacts(req, res);
+          return catfacts(req, res);
         }
 
         res.send(facts[0]);
       }
     });
   }
-};
+];
 
 app.get('/', function(req, res) {
-  var len = facts.length;
-  var fact = facts[~~(Math.random() * len)];
-  var match = fact.match(/\{(\w+)\}/);
 
-  if (match !== null) {
-    return external[match[1]](req, res);
+  var r = ~~(Math.random() * (external.length * 3));
+  if(r < external.length) {
+    external[r](req, res);
+    return;
   }
-
+  var fact = facts[~~(Math.random() * facts.length)];
   res.send(fact);
 });
 
+app.get('/stress', function(req, res) {
+  var hits = 0;
+  var totalReqs = 0;
+  var total = 1000;
+  for(var i = 0; i < total; ++i) {
+    request('http://localhost:5000/', function(error, response, data) {
+      if(facts.indexOf(data) !== -1) {
+        ++hits;
+      }
+      ++totalReqs;
+      if(totalReqs == total) {
+        console.log("Got " + hits + " from our facts.");
+        console.log("Got " + (total - hits) + " from catfacts.");
+        res.send("Done");
+      }
+    });
+  }
+});
 
 
 var server = app.listen(5000, function() {
