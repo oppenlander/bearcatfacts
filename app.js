@@ -5,7 +5,7 @@ var app = express();
 
 var facts = [
   "Bearcats are also called Binturongs.",
-  "Bearcats have a muck gland that emits an odor reminiscent of popcorn.",
+  "Bearcats have a musk gland that emits an odor reminiscent of popcorn.",
   "Bearcats are omnivorous, feeding on small mammals, birds, fish, earthworms, insects and fruits.",
   "The bearcat's genus name is Arctictis.",
   "A bearcat is called a 'tenturun' in Riau, Indonesia.",
