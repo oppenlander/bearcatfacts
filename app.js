@@ -4,6 +4,15 @@ var express = require('express'),
 var app = express();
 
 var facts = [
+  "Although the binturong is also known as the bearcat, it’s not closely related to bears or cats.",
+  "The meaning of the word binturong is unknown. The language it was derived from is now extinct.",
+  "Binturongs are in the order Carnivora, but they mostly eat fruit",
+  "Bearcats smell like buttered popcorn",
+  "Binturongs also make lots of noises to communicate",
+  "Bearcats live high in the forest canopy and rarely come down to the ground",
+  "Bearcast can delay implantation of an embryo",
+  "Bearcat walk like bears",
+  "Bearcats have prehensile tails",
   "Bearcats are also called Binturongs.",
   "Bearcats have a musk gland that emits an odor reminiscent of popcorn.",
   "Bearcats are omnivorous, feeding on small mammals, birds, fish, earthworms, insects and fruits.",
